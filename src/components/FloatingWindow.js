@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from 'react';
-import { Pin, Minimize, Maximize, X } from 'lucide-react';
+import { Pin, Minimize, Maximize } from 'lucide-react';
 
 const FloatingWindow = ({ children, title = "专注时钟" }) => {
   const [position, setPosition] = useState({ x: window?.innerWidth - 320 || 0, y: 20 });
@@ -52,40 +54,32 @@ const FloatingWindow = ({ children, title = "专注时钟" }) => {
     };
   }, [isDragging, dragStart]);
 
-  // 切换置顶状态
-  const toggleAlwaysOnTop = () => {
-    setIsAlwaysOnTop(!isAlwaysOnTop);
-  };
-
-  // 切换最小化状态
-  const toggleMinimize = () => {
-    setIsMinimized(!isMinimized);
-  };
-
   return (
     <div
       ref={windowRef}
-      className={`floating-window ${isAlwaysOnTop ? 'always-on-top' : ''}`}
+      className="fixed shadow-lg rounded-lg bg-white"
       style={{
         transform: `translate(${position.x}px, ${position.y}px)`,
         height: isMinimized ? '40px' : 'auto',
-        overflow: isMinimized ? 'hidden' : 'auto'
+        overflow: isMinimized ? 'hidden' : 'auto',
+        zIndex: isAlwaysOnTop ? 9999 : 1,
+        minWidth: '300px'
       }}
     >
       <div
-        className="floating-window-header"
+        className="bg-gray-100 p-2 rounded-t-lg flex justify-between items-center cursor-move"
         onMouseDown={handleMouseDown}
       >
         <div className="text-sm font-medium">{title}</div>
         <div className="window-controls flex items-center space-x-2">
           <button
-            onClick={toggleAlwaysOnTop}
+            onClick={() => setIsAlwaysOnTop(!isAlwaysOnTop)}
             className={`p-1 rounded hover:bg-gray-200 ${isAlwaysOnTop ? 'text-blue-500' : 'text-gray-500'}`}
           >
             <Pin size={14} />
           </button>
           <button
-            onClick={toggleMinimize}
+            onClick={() => setIsMinimized(!isMinimized)}
             className="p-1 rounded hover:bg-gray-200 text-gray-500"
           >
             {isMinimized ? <Maximize size={14} /> : <Minimize size={14} />}
